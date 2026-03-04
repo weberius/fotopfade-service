@@ -10,4 +10,4 @@ Um die erstellten html-Daten in das `docs` Verzeichnis zu kopieren, wird folgend
 .Kommando zum kopieren der Dokumentation
   mvn process-resources
 
-Wenn die so erstellten html-Dateien mit eingecheckt werden, wird aktuell die Dokumentation unter https://weberius.github.io/kulturpfadservice/main.html[KulturpfadeService] zur Verfügung gestellt.
+Wenn die so erstellten html-Dateien mit eingecheckt werden, wird aktuell die Dokumentation unter https://weberius.github.io/fotopfad-service/main.html[FotopfadService] zur Verfügung gestellt.
