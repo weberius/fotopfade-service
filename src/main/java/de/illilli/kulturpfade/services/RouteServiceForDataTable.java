@@ -1,0 +1,108 @@
+package de.illilli.kulturpfade.services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import de.illilli.kulturpfade.model.Culturalpath;
+import de.illilli.kulturpfade.model.POI;
+import de.illilli.kulturpfade.model.RoutingData;
+import de.illilli.kulturpfade.repository.JdbcRepository;
+import de.illilli.kulturpfade.repository.PoiValuesRepository;
+
+@Component
+public class RouteServiceForDataTable {
+
+    private static Logger logger = LoggerFactory.getLogger(RouteServiceForDataTable.class);
+
+    private JdbcRepository<POI> repo = new PoiValuesRepository("");
+    private List<Culturalpath> data = new ArrayList<>();
+
+    public RouteServiceForDataTable() throws RoutingNotAvailableException {
+        this("data");
+    }
+
+    public RouteServiceForDataTable(String id) throws RoutingNotAvailableException {
+        this(new PoiValuesRepository(id).find(), new PrepareRouting(id).getData());
+    }
+
+    RouteServiceForDataTable(List<POI> poiList, List<RoutingData> routingDataList) {
+
+        if (routingDataList == null) {
+            return;
+        }
+
+        int i = 0;
+        int time = 0;
+        int distance = 0;
+
+        String timeStr = "%02d:%02d".formatted(0, 0);
+        String distanceStr = "" + "%d,%03d km".formatted(0, 0);
+
+        for (POI poi : poiList) {
+            String poiId = poi.getId();
+            int beginIndex = poi.getId().lastIndexOf("-") + 1;
+            String name = poi.getName();
+
+            if (i == 0) {
+                Culturalpath path = new Culturalpath(poiId, name, timeStr, distanceStr);
+                this.data.add(path);
+            }
+
+            if (AnchorType.isAnchor(poiId)) {
+                for (RoutingData routingData : routingDataList) {
+                    if (poi.getLat() == routingData.getToLat()
+                            && poi.getLng() == routingData.getToLon()) {
+
+                        time = time + routingData.getTime();
+                        distance = distance + routingData.getDistance();
+
+                        int hours = time / 60;
+                        int remainingMinutes = time % 60;
+                        timeStr = "%02d:%02d".formatted(hours, remainingMinutes);
+                        int kilometers = distance / 1000;
+                        int remainingMeters = distance % 1000;
+                        distanceStr = "" + "%d,%03d km".formatted(kilometers, remainingMeters);
+
+                        Culturalpath path = new Culturalpath(poiId, name, timeStr, distanceStr);
+                        this.data.add(path);
+                        break;
+                    }
+                }
+            } else if (AnchorType.isBase(poiId)) {
+                for (RoutingData routingData : routingDataList) {
+                    if (poi.getLat() == routingData.getToLat()
+                            && poi.getLng() == routingData.getToLon()) {
+                        time = time + routingData.getTime();
+                        distance = distance + routingData.getDistance();
+
+                        int hours = time / 60;
+                        int remainingMinutes = time % 60;
+                        timeStr = "%02d:%02d".formatted(hours, remainingMinutes);
+                        int kilometers = distance / 1000;
+                        int remainingMeters = distance % 1000;
+                        distanceStr = "" + "%d,%03d km".formatted(kilometers, remainingMeters);
+
+                        Culturalpath path = new Culturalpath(poiId, name, timeStr, distanceStr);
+                        if (!"null".equals(poi.getName())) {
+                            this.data.add(path);
+                        }
+                        break;
+                    }
+                }
+            } else if (AnchorType.isUnanchored(poiId)) {
+                Culturalpath path = new Culturalpath(poiId, name, "", "");
+                //this.data.add(path);
+            }
+            i++;
+        }
+    }
+
+    public List<Culturalpath> getData() {
+        return this.data;
+    }
+
+}

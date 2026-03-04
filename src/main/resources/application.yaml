@@ -1,0 +1,8 @@
+spring:
+  liquibase:
+    change-log: classpath:db.changelog/dbchangelog.xml
+    enabled: false
+
+# OSM und GraphHopper Konfiguration
+osm:
+  data-directory: osm

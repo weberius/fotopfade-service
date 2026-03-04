@@ -1,0 +1,121 @@
+== Daten
+
+Es werden unterschiedliche Arten von Daten unterschieden:
+
+* OpenStreetMap Daten
+* Daten für das Routing
+* Daten zu Abschnitten und POI
+
+=== OpenStreetMap Daten
+
+Die Applikation benutzt die Routing-Engine von Graphhopper. Hierfür ist es notwendig die passenden OSM-Daten zur Verfügung zu stellen. Sie werden vom Server der Geofabrik bezogen und sollten im Verzeichnis `osm` im Projekt-Root hinterlegt werden.
+
+Die OSM-Datei und die GraphHopper-Cache-Datenbank werden im `osm` Verzeichnis gespeichert und bleiben bei `mvn clean` erhalten. Dies ermöglicht schnellere Build-Zeiten, da die Datenbank nicht bei jedem Build neu erstellt werden muss.
+
+.Download und Einrichtung
+Die gewünschte OSM-Datei kann manuell von https://download.geofabrik.de heruntergeladen und in das `osm` Verzeichnis kopiert werden:
+
+  cp germany-latest.osm.pbf osm/
+
+.Beispiel Regierungsbezirk Köln
+  <download-osm.fromFile>europe/germany/nordrhein-westfalen/koeln-regbez-latest.osm.pbf</download-osm.fromFile>
+
+Im angegebenen Beispiel werden die Daten für den Regierungsbezirk Köln heruntergeladen
+
+.Beispiel für Hessen
+  <download-osm.fromFile>europe/germany/hessen-latest.osm.pbf</download-osm.fromFile>
+
+Im Beispiel für Hessen wird ein Abzug für das Bundesland Hessen heruntergeladen.
+
+Auf der Seite _geofabrik.de/europe/germany_ <<geofabrik>> findet sich einen Auflistung, welche Daten von der Geofabrik bezogen werden können.
+
+
+=== Daten für das Routing
+
+Daten werden in Form von csv-Dateien eingelesen. Diese Dateien werden im `resources` Verzeichnis hinterlegt. Die Daten sollte entsprechend der id aufgebaut sein:
+
+.Dateiname
+----
+b03-t06.csv
+----
+
+Die Struktur besteht aus vier Spalten:
+
+|===
+|id|eindeutige id; z.B. 'b03-t06-01-0'
+|name|Name des Punktes; 'null' wenn Stützpunkt
+|lat|Breitengrad; z.B. '51'
+|lng|Längengrad; z.B. '7'
+|===
+
+Jeder Datensatz sollte durch die `id` eindeutig identifizierbar sein. Sie sollte im Bezug auf die Kulturdaten folgendermaßen aufgebaut werden:
+
+  <bezirk>-<tour>-<nr>-<punkt>
+
+Wichtig ist hier, dass die Werte innerhalb der ID in der weiteren Verarbeitung verwendet werden. Dafür ist es notwendig, dass die Werte durch `-` von einander getrennt werden.
+
+.Bedeutung der `id`
+|===
+|bezirk|Bezirk des Kulturpfades: z.B. Lindental: b03
+|tour|Nummer der Tour; z.B. Tour 1: t01
+|nr|Nummer des Ankerpunktes; p01 für Ankerpunkt, s01 für Stützpunkt
+|punkt| 6.1 - Ankerpunkt; 0 - Stützpunkt
+|===
+
+.Beispieldatensatz
+----
+koeln-innenstadt-p01-1;Heinzelmännchenbrunnen;50.940007983370705;6.957310070072043
+koeln-innenstadt-u02-2;Unter Goldschmied;50.93915927;6.95810884
+koeln-innenstadt-u03-3;Theo Burauen Platz;50.93895138;6.95841998
+koeln-innenstadt-s04-2;Theo Burauen Platz;50.93895138;6.95841998
+koeln-innenstadt-u05-4;Römische Wasserleitung;50.93910674660413;6.958303544859174
+koeln-innenstadt-u06-5;Laurenzgittergäßchen;50.93912378;6.95863724
+koeln-innenstadt-u07-6;Praetorium;50.93902067;6.95895642
+koeln-innenstadt-u08-7;Rathaus;50.93799641;6.95930243
+koeln-innenstadt-u09-8;Altermarkt;50.93859475;6.96001858
+koeln-innenstadt-s10-3;Fischmarkt;50.93828375;6.96217239
+koeln-innenstadt-u10-9;Hänneschen-Theater am Eisenmarkt;50.93708368;6.96196318
+koeln-innenstadt-s11-4;Altermarkt;50.93668478;6.96149647
+koeln-innenstadt-u11-10;Reiterdenkmal Friedrich Wilhelm;50.93625883;6.96068645
+koeln-innenstadt-u12-11;Gürzenich;50.93651913;6.95844412
+koeln-innenstadt-s03-5;Gürzenich;50.93623516;6.95820272
+koeln-innenstadt-s03-10;null;50.93627742;6.95804179
+koeln-innenstadt-u12-12;Marsplatz, Marspfortengasse;50.93759583;6.95928901
+koeln-innenstadt-u13-13;Wallraf-Richartz Museum;50.93739976;6.95843875
+koeln-innenstadt-u14-14;Farina;50.93770062;6.95809275
+koeln-innenstadt-u15-15;Gülichplatz;50.93757723;6.95807129
+koeln-innenstadt-s15-6;Gülichplatz;50.93757723;6.95807129
+koeln-innenstadt-u16-16;Fastnachtsbrunnen;50.93757385;6.95795327
+----
+
+Generell sollten die Sehenswürdigkeiten verwendet werden, um die Route zu berechnen. Es werden alle Sehenswürdigkeiten berücksichtigt, die in der csv-Datei mit 'p' markiert sind. Dabei kommt es immer häufiger zu Abweichungen zwischen Sehenswürdigkeit und Route, weil z.B. mehrere Sehenswürdigkeiten in unmittelbarer Nähe zueinander liegen, oder eine Sehenswürdigkeit nicht direkt an der Route liegen soll oder kann,
+
+Durch die Markierung der Sehenswürdigkeit mit 'u' in der csv-Datei, wird die entsprechende Sehenswürdigkeit nicht mehr ins Routing einbezogen. Zusätzlich ist es möglich unsichtbare Punkte durch die Markierung 's' in der csv-Datei zu definieren. Im Ergebnis wird ggf eine Route mit nicht sehr aussagefähigen Entfernungen aber richtiger gesamter Entfernung und Laufzeit ermittelt.
+
+In Zukunft soll das Konzept folgendermaßen geändert werden:
+
+|===
+|p|Punkte, die einen POI kennzeichnen|sie werden in das Routing einbezogen, aber auch auf der Oberfläche anzeigen
+|s|Punkte, die die Strecke kennzeichnen|sie werden nur angezeigt, wenn der Name nicht 'null' ist
+|u|Punkte, die einen POI kennzeichnen|sie werden nicht in das Routing einbezogen aber auf der Oberfläche angezeigt. Dies sollte der Normalfall für die Kennzeichnung von POI sein.
+|===
+- p: Punkte, die einen POI kennzeichnen; sie werden in das Routing einbezogen, aber auch auf der Oberfläche anzeigen
+- s: Punkte, die die Strecke kennzeichnen; sie werden nur angezeigt, wenn der Name nicht 'null' ist
+- u: Punkte, die einen POI kennzeichnen; sie werden nicht in das Routing einbezogen aber auf der Oberfläche angezeigt. Dies sollte der Normalfall für die Kennzeichnung von POI sein.
+
+Durch die Konzentration auf 'u' und 's' kann die Strecke vom POI getrennt werden. Die Berücksichtigung von 'p' erlaubt es rückwärtskompatibel zu bleiben. Eine eigene Nummerierung von 'u' und 's' Punkten bedeutet auch, dass de Darstellung auf der Oberfläche und die Darstellung der Route unabhängig voneinander nummeriert werden können.
+
+
+Generell sollen nur Points of Interest miteinander verbunden werden. Dies sind die Ankerpunkte der Route. Es ist aber ggf notwendig Stützpunkte hinzuzufügen, die die Route so anpassen, dass nicht der direkte Weg errechnet wird. Ankerpunkte sind dadurch gekennzeichnet, dass die id mit der Ordnungszahl des Kulturpfades endet, während Stützpunkte dadurch gekennzeichnet sind, dass sie den Prefix mit dem Ankerpunkt teilen, aber die Nummer mit dem 's' verbunden sind.
+
+Es werden allerdings auch Ankerlose Punkte untersützt. Sie sind dann notwendig, wenn ein POI nicht mit in das Routing einbezogen werden soll. Ankerlose Punkte sind durch die Zeichenkombination "-u" gekennzeichnet. Bsp.: `b09-t01-u01-0.1`
+
+Weiterhin wird die zweite Spalte, die für das Feld `name` steht, mit dem Wert `null` gefüllt.
+
+.Ankerpunkt und zwei Stützpunkte, ein ankerloser Punkt
+----
+b03-t06-p01-6.1;Pauliplatz;50.93808;6.89794
+b03-t06-s01-0;null;50.939027;6.894951
+b03-t06-s02-0;null;50.936174;6.894329
+b03-t06-u01-7.1;Platz;50.92808;6.88794
+----

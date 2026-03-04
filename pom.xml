@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<groupId>de.illilli</groupId>
+	<artifactId>kulturpfade</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>routingservice</name>
+	<description>Service for routing georeferenced points to a path for walking</description>
+	<properties>
+		<java.version>21</java.version>
+		<geotools.version>33-SNAPSHOT</geotools.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+		<download-osm.url>https://download.geofabrik.de</download-osm.url>
+		<!-- download-osm.fromFile>europe/germany/nordrhein-westfalen/duesseldorf-regbez-latest.osm.pbf</download-osm.fromFile -->
+		<download-osm.fromFile>europe/germany/nordrhein-westfalen/koeln-regbez-latest.osm.pbf</download-osm.fromFile>
+		<!-- download-osm.fromFile>europe/germany/nordrhein-westfalen-latest.osm.pbf</download-osm.fromFile -->
+		<!-- download-osm.fromFile>europe/germany/hessen-latest.osm.pbf</download-osm.fromFile -->
+		<!-- download-osm.fromFile>europe/germany/niedersachsen-latest.osm.pbf</download-osm.fromFile -->
+		<download-osm.toDir>${project.basedir}/osm</download-osm.toDir>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.orbisgis/h2gis -->
+		<dependency>
+			<groupId>org.orbisgis</groupId>
+			<artifactId>h2gis</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.grundid.opendatalab</groupId>
+			<artifactId>geojson-jackson</artifactId>
+			<version>1.14</version>
+		</dependency>
+		<!-- dependencies for geotools -->
+
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-epsg-hsql</artifactId>
+			<version>27.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>27.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geojson</artifactId>
+			<version>27.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.graphhopper/graphhopper-core -->
+		<dependency>
+			<groupId>com.graphhopper</groupId>
+			<artifactId>graphhopper-core</artifactId>
+			<version>6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.7.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.jenetics/jpx -->
+		<dependency>
+			<groupId>io.jenetics</groupId>
+			<artifactId>jpx</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<excludes>
+						<exclude>**/*IntegrationTest</exclude>
+						<exclude>**/*ApplicationTests</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- integration test -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>none</exclude>
+							</excludes>
+							<includes>
+								<include>**/*IntegrationTest</include>
+								<include>**/*ApplicationTests</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Build GraphHopper Cache -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>build-graphhopper-cache</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>de.illilli.kulturpfade.BuildGraphHopperCache</mainClass>
+							<classpathScope>compile</classpathScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- download OSM-Data
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>2.0.2</version>
+				<executions>
+					<execution>
+						<id>download-osm</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>download-single</goal>
+						</goals>
+						<configuration>
+							<url>${download-osm.url}</url>
+							<fromFile>${download-osm.fromFile}</fromFile>
+							<toDir>${download-osm.toDir}</toDir>
+							<skipIfExists>true</skipIfExists>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+			<!-- copy osm to test-classes - not needed anymore, using /osm directory directly -->
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>2.2.3</version>
+				<executions>
+					<execution>
+						<id>generate-docs</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<backend>html</backend>
+							<doctype>book</doctype>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.restdocs</groupId>
+						<artifactId>spring-restdocs-asciidoctor</artifactId>
+						<version>${spring-restdocs.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<!-- copy doku to /docs -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>copy-asciidoc-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>target/generated-docs</directory>
+									<includes>
+										<include>**/*.jpg</include>
+										<include>**/*.png</include>
+										<include>**/*.html</include>
+									</includes>
+								</resource>
+							</resources>
+							<outputDirectory>docs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.5.0</version>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+					<release>${java.version}</release>
+                </configuration>
+            </plugin>
+        </plugins>
+	</build>
+	<repositories>
+		<repository>
+		<id>osgeo</id>
+		<name>OSGeo Release Repository</name>
+		<url>https://repo.osgeo.org/repository/release/</url>
+		<snapshots><enabled>false</enabled></snapshots>
+		<releases><enabled>true</enabled></releases>
+		</repository>
+		<repository>
+		<id>osgeo-snapshot</id>
+		<name>OSGeo Snapshot Repository</name>
+		<url>https://repo.osgeo.org/repository/snapshot/</url>
+		<snapshots><enabled>true</enabled></snapshots>
+		<releases><enabled>false</enabled></releases>
+		</repository>
+	</repositories>
+</project>

@@ -1,0 +1,30 @@
+= KulturpfadeService
+
+:author: Wolfram Eberius
+:Date: 01.04.2023
+:version: 0.0.1
+:toc: left
+:toc-title: Inhaltsverzeichnis
+:numbered:
+:toclevels: 2
+:icons:
+:imagesdir: ./images
+
+[NOTE]
+Autor: {author} +
+Version: {Version} +
+Datum: {Date} +
+
+include::preface.adoc[]
+
+include::01_interfaces.adoc[]
+
+include::02_data.adoc[]
+
+include::05_ui.adoc[]
+
+include::08_test.adoc[]
+
+include::09_documentation.adoc[]
+
+include::bibliography.adoc[]
