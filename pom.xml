@@ -11,10 +11,10 @@
 	</parent>
 
 	<groupId>de.illilli</groupId>
-	<artifactId>kulturpfade</artifactId>
+	<artifactId>fotopfade</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
-	<name>routingservice</name>
-	<description>Service for routing georeferenced points to a path for walking</description>
+	<name>fotopfad-service</name>
+	<description>Service for photo-guided routing and walking paths (Fork of kulturpfadservice)</description>
 	<properties>
 		<java.version>21</java.version>
 		<geotools.version>33-SNAPSHOT</geotools.version>
