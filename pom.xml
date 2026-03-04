@@ -147,7 +147,7 @@
 							<goal>java</goal>
 						</goals>
 						<configuration>
-							<mainClass>de.illilli.kulturpfade.BuildGraphHopperCache</mainClass>
+							<mainClass>de.illilli.fotopfade.BuildGraphHopperCache</mainClass>
 							<classpathScope>compile</classpathScope>
 						</configuration>
 					</execution>
