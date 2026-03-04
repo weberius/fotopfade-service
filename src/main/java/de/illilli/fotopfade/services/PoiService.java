@@ -22,7 +22,7 @@ public class PoiService {
     private static Logger logger = LoggerFactory.getLogger(RoutingService.class);
 
     private FeatureCollection featureCollection = new FeatureCollection();
-    private JdbcRepository<POI> repo = new PoiValuesRepository("");
+    private JdbcRepository<POI> repo;
 
     public PoiService() {
         this("data");

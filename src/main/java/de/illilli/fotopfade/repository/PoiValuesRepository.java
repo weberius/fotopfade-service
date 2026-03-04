@@ -21,10 +21,9 @@ public class PoiValuesRepository implements JdbcRepository<POI> {
 
     public PoiValuesRepository(String id) {
         if (id == null || id.isEmpty()) {
-            this.data = "/muelheim.csv";
-        } else {
-            this.data = "/" + id + ".csv";
+            throw new IllegalArgumentException("Route-ID darf nicht null oder leer sein");
         }
+        this.data = "/" + id + ".csv";
     }
 
     @Override
