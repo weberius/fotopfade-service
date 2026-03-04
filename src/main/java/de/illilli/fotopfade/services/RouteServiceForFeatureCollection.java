@@ -22,7 +22,7 @@ import java.util.Map;
 public class RouteServiceForFeatureCollection {
 
     private FeatureCollection featureCollection = new FeatureCollection();
-    private JdbcRepository<POI> repo = new PoiValuesRepository("");
+    private JdbcRepository<POI> repo;
     int distance = 0;
     int time = 0;
 

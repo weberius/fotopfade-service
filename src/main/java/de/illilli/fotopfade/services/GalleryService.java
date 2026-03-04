@@ -15,7 +15,7 @@ public class GalleryService {
     private static Logger logger = LoggerFactory.getLogger(GalleryService.class);
 
     private List<Gallery> galleries = new ArrayList<>();
-    private JdbcRepository<POI> repo = new PoiValuesRepository("");
+    private JdbcRepository<POI> repo;
 
     public GalleryService(String id) {
         // 1. get Data

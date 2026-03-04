@@ -18,7 +18,7 @@ public class RouteServiceForDataTable {
 
     private static Logger logger = LoggerFactory.getLogger(RouteServiceForDataTable.class);
 
-    private JdbcRepository<POI> repo = new PoiValuesRepository("");
+    private JdbcRepository<POI> repo;
     private List<Culturalpath> data = new ArrayList<>();
 
     public RouteServiceForDataTable() throws RoutingNotAvailableException {
