@@ -50,14 +50,12 @@ function updateContent() {
     document.getElementById('routeSelectorSpan').innerHTML = i18next.t('route');
     document.getElementById('aboutSelectorSpan').innerHTML = i18next.t('about');
     document.getElementById('poisSelectorSpan').innerHTML = i18next.t('pois');
-    document.getElementById('downloadSelectorSpan').innerHTML = i18next.t('download');
     document.getElementById('poisPanelTitle').innerHTML = i18next.t('pois');
     document.getElementById('welcomeModelTitle').innerHTML = i18next.t('welcomeModelTitle');
-    document.getElementById('startModalTitle').innerHTML = i18next.t('startModalTitle');
 
     new ModalBuilder().build('aboutTabsHeader', i18next.language);
     new ModalBuilder().loadMarkdown('attributionModalLi', i18next.language);
-    new ModalBuilder().loadMarkdown('disclaimerModalLi', i18next.language);
+    new ModalBuilder().loadMarkdown('resourcesModalLi', i18next.language);
     new ModalBuilder().loadMarkdown('featuresModalLi', i18next.language);
     new ModalBuilder().build('routModalBody', i18next.language);
     new ModalBuilder().loadMarkdown('linksModalLi', i18next.language);
@@ -65,7 +63,14 @@ function updateContent() {
     new ModalBuilder().loadMarkdown('aboutModalLi', i18next.language);
     new ModalBuilder().loadMarkdown('startModalBody', i18next.language);
     new ModalBuilder().build('leaflet-control-attribution', i18next.language);
+
+    // Footer modals
+    new ModalBuilder().loadMarkdown('fImpressumLi', i18next.language, 'impressumModalLi');
+    new ModalBuilder().loadMarkdown('fDisclaimerLi', i18next.language, 'disclaimerModalLi');
+    new ModalBuilder().loadMarkdown('fDatenschutzLi', i18next.language, 'datenschutzLi');
+    new ModalBuilder().loadMarkdown('fCoffeeLi', i18next.language, 'bymecoffeeModalLi');
 }
+
 
 /**
 Use this class to buildLanguageSelector
@@ -87,9 +92,9 @@ class LanguageSelector {
         lng = i18next.t(newLanguage);
         newLi = document.createElement('li');
         if (newLanguage === existingLanguage) {
-          newLi.innerHTML = '<a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="changeLanguage(\'' + newLanguage + '\')"><i class="bi bi-translate"></i>&nbsp;&nbsp;<i>' + lng + '</i></a>';
+          newLi.innerHTML = '<a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="changeLanguage(event, \'' + newLanguage + '\')"><i class="bi bi-translate"></i>&nbsp;&nbsp;<i>' + lng + '</i></a>';
         } else {
-          newLi.innerHTML = '<a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="changeLanguage(\'' + newLanguage + '\')"><i class="bi bi-translate"></i>&nbsp;&nbsp;' + lng + '</a>';
+          newLi.innerHTML = '<a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="changeLanguage(event, \'' + newLanguage + '\')"><i class="bi bi-translate"></i>&nbsp;&nbsp;' + lng + '</a>';
         }
         targetElement = document.getElementById('languageSelectorUl');
         targetElement.appendChild(newLi);
@@ -98,7 +103,8 @@ class LanguageSelector {
 }
 
 // Funktion zur Sprachumschaltung
-function changeLanguage(language) {
+function changeLanguage(event, language) {
+    event.preventDefault();
     i18next.changeLanguage(language, (err, t) => {
         if (err) {
             return console.error('Error changing language:', err);

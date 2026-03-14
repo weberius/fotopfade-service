@@ -105,6 +105,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0</version>
 				<configuration>
+					<argLine>-Xmx6g</argLine>
 					<excludes>
 						<exclude>**/*IntegrationTest</exclude>
 						<exclude>**/*ApplicationTests</exclude>
@@ -123,6 +124,7 @@
 							<goal>test</goal>
 						</goals>
 						<configuration>
+							<argLine>-Xmx6g</argLine>
 							<excludes>
 								<exclude>none</exclude>
 							</excludes>
