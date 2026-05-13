@@ -1,4 +1,6 @@
-# Was mich erwartet
+# Geschichte von Homberg (Efze)
+
+![Geschichte von Homberg (Efze)](./images/homberg/geschichte.jpg)
 
 Ihr Spaziergang führt auf knapp zwei Kilometern durch die historische Altstadt von Homberg (Efze) beginnt am Neuen Tor, einem der alten Zugänge zur Stadt. Von hier führt der Weg durch die malerische Untergasse bis zum Westheimer Tor und weiter entlang der Westheimer Straße mit Blick auf den traditionsreichen Weißen Hof. Am Löwenhaus biegt der Weg scharf ab und leitet Sie durch die Marktgasse zum ehemaligen Adelssitz der Familie von Bardeleben.
 
@@ -11,7 +13,7 @@ Zurück in der Altstadt erwarten Sie weitere Zeugnisse der Geschichte: die ehema
 ## Audio: Was macht Homberg aus?
 
 <audio controls class="full-width-audio">
-  <source src="locales/homberg/de/homberg-efze.mp3" type="audio/mpeg">
+  <source src="locales/homberg/de/geschichte.mp3" type="audio/mpeg">
   Dein Browser unterstützt kein Audioelement.
 </audio>
 

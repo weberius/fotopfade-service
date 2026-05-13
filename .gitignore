@@ -4,5 +4,6 @@
 /**/.DS_Store
 /**/*.pbf
 /*.pbf
+/osm/*.bak
 /*.gpx
 /*.sh
