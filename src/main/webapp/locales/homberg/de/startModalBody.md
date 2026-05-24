@@ -1,6 +1,6 @@
 ![Homber (Efze)](./images/homberg/start.jpg)
 
-Der Fotopfad durch Homberg (Efze) befindet sich derzeit noch im Aufbau. Inhalte und Funktionen werden fortlaufend ergänzt, überarbeitet und geprüft. Daher kann es aktuell noch zu Fehlern, unvollständigen Informationen oder technischen Einschränkungen kommen.
+Wir heißen dich herzlich willkommen zu deinem Pfad durch die historische Stadt Homberg! Mach dich bereit für eine intensive und spannende Begegnung mit der Vergangenheit. Entdecke die Geheimnisse der mittelalterlichen Altstadt, ihre prägenden Gebäude und die Geschichten, die sie erzählen. Wir laden dich ein, genau hinzusehen, die Augen offen zu halten und die Spuren der Zeit bewusst zu erkunden. Lass dich von Hombergs Charme verzaubern und genieße diese einzigartige Reise!
 
 ## Was kann ich entdecken?
 
