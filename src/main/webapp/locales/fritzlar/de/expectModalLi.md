@@ -15,7 +15,7 @@ Heute begeistert Fritzlar mit einem gut erhaltenen mittelalterlichen Stadtbild, 
 ## Eine kurze Geschichte Fritzlars
 
 <audio controls class="full-width-audio">
-  <source src="locales/fritzlar/de/expect.mp3" type="audio/mpeg">
+  <source src="locales/fritzlar/de/geschichte.mp3" type="audio/mpeg">
   Dein Browser unterstützt kein Audioelement.
 </audio>
 
